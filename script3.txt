@@ -1,0 +1,81 @@
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+});
+
+function loadTasks() {
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+
+    // Retrieve tasks from local storage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    tasks.forEach(task => {
+        createTaskElement(task);
+    });
+}
+
+function addTask() {
+    const taskInput = document.getElementById('taskInput');
+    const taskText = taskInput.value.trim();
+
+    if (taskText !== '') {
+        const task = {
+            text: taskText,
+            completed: false
+        };
+
+        // Retrieve tasks from local storage
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        // Add new task
+        tasks.push(task);
+
+        // Save tasks to local storage
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+
+        // Create task element and append it to the list
+        createTaskElement(task);
+
+        // Clear the input field
+        taskInput.value = '';
+    }
+}
+
+function createTaskElement(task) {
+    const taskList = document.getElementById('taskList');
+    const li = document.createElement('li');
+
+    li.innerHTML = `
+        <span class="${task.completed ? 'completed' : ''}">${task.text}</span>
+        <button onclick="toggleTask(${tasks.indexOf(task)})">Toggle</button>
+        <button onclick="deleteTask(${tasks.indexOf(task)})">Delete</button>
+    `;
+
+    taskList.appendChild(li);
+}
+
+function toggleTask(index) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Toggle the completion status
+    tasks[index].completed = !tasks[index].completed;
+
+    // Save tasks to local storage
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // Reload tasks
+    loadTasks();
+}
+
+function deleteTask(index) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Remove the task
+    tasks.splice(index, 1);
+
+    // Save tasks to local storage
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // Reload tasks
+    loadTasks();
+}
